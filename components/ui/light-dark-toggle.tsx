@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Tooltip, TooltipProvider, TooltipTrigger } from "./tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
 import { MoonIcon, SunIcon } from "lucide-react";
-import { TooltipContent } from "@radix-ui/react-tooltip";
 
 type Props = {
   className?: string;
