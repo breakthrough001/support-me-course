@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
@@ -18,15 +19,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SelectValue } from "@radix-ui/react-select";
+import { format } from "date-fns";
 import { CalendarIcon, PersonStanding } from "lucide-react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -86,9 +92,8 @@ export default function SignupPage() {
 
   const accountType = form.watch("accountType");
 
-  if (accountType === "company") {
-    console.log("yeee");
-  }
+  const dobFromDate = new Date();
+  dobFromDate.setFullYear(dobFromDate.getFullYear() - 120);
 
   return (
     <>
@@ -186,11 +191,28 @@ export default function SignupPage() {
                             variant="outline"
                             className="normal-case flex justify-between pr-2"
                           >
-                            <span>Pick a date</span>
+                            {!!field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
                             <CalendarIcon />
                           </Button>
                         </FormControl>
                       </PopoverTrigger>
+                      <PopoverContent align="start" className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          defaultMonth={field.value}
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          fixedWeeks
+                          weekStartsOn={1}
+                          fromDate={dobFromDate}
+                          toDate={new Date()}
+                          captionLayout="dropdown-buttons"
+                        />
+                      </PopoverContent>
                     </Popover>
                     <FormMessage />
                   </FormItem>
