@@ -55,8 +55,23 @@ const formSchema = z
       // return to make sure you get the value back and you can use it else where in your code
       return date <= eighteenYearsAgo;
     }, "You must be atleast 18 years old"),
+    password: z
+      .string()
+      .min(8, "Password must contain atleast 8 characters")
+      .refine((password) => {
+        return /^(?=.*[!@#$%^&?*])(?=.*[A-Z]).*$/.test(password);
+      }, "Password must contain atleast 1 special character and 1 uppercase letter"),
+    passwordConfirm: z.string(),
   })
   .superRefine((data, ctx) => {
+    if (data.password !== data.passwordConfirm) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["passwordConfirm"],
+        message: "Passwords do not match",
+      });
+    }
+
     // if account type is company and company name is empty display error
     if (data.accountType === "company" && !data.companyName) {
       ctx.addIssue({
@@ -214,6 +229,40 @@ export default function SignupPage() {
                         />
                       </PopoverContent>
                     </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="••••••••"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="passwordConfirm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Confirm password</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="••••••••"
+                        type="password"
+                        {...field}
+                      />
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
